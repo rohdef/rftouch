@@ -1,3 +1,3 @@
 #!/bin/bash
 
-coffee --watch ./coffee --output ./rftouch
+coffee --output ./rftouch --watch ./coffeescript
