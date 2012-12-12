@@ -1,9 +1,11 @@
 Ext.define "RfTouchTest.data.proxy.FailProxy", {
   extend: 'Ext.data.proxy.Proxy'
   
+  _tries: 0
+  
   config:
     timeout: 1000
-    tries: 3
+    failCount: 3
   
   read: (operation, callback, scope) ->
     
