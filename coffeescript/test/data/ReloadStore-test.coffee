@@ -30,8 +30,9 @@ buster.testCase "ReloadStore", {
       if tries < 3
         expect(successful).toEqual(false)
         tries += 1
+        store.load()
       else
-        expect(successful).toEqual(false)
+        expect(successful).toEqual(true)
         done()
     
     this.normalStore.load()
@@ -54,8 +55,9 @@ buster.testCase "ReloadStore", {
       if tries < 2
         expect(successful).toEqual(false)
         tries += 1
+        store.load()
       else
-        expect(successful).toEqual(false)
+        expect(successful).toEqual(true)
         done()
     
     this.normalStore.load()

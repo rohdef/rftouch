@@ -8,7 +8,12 @@ Ext.define("RfTouchTest.data.proxy.FailProxy", {
     failCount: 3
   },
   read: function(operation, callback, scope) {
-    operation.setSuccessful();
+    if (this._tries < this.getFailCount()) {
+      operation.setException("FAIL!");
+      this._tries += 1;
+    } else {
+      operation.setSuccessful();
+    }
     operation.setCompleted();
     if (typeof callback === 'function') {
       return callback.call(scope || this, operation);

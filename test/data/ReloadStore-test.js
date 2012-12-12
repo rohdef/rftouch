@@ -28,9 +28,10 @@ buster.testCase("ReloadStore", {
     this.normalStore.on('load', function(store, records, successful, operation, opts) {
       if (tries < 3) {
         expect(successful).toEqual(false);
-        return tries += 1;
+        tries += 1;
+        return store.load();
       } else {
-        expect(successful).toEqual(false);
+        expect(successful).toEqual(true);
         return done();
       }
     });
@@ -51,9 +52,10 @@ buster.testCase("ReloadStore", {
     this.normalStore.on('load', function(store, records, successful, operation, opts) {
       if (tries < 2) {
         expect(successful).toEqual(false);
-        return tries += 1;
+        tries += 1;
+        return store.load();
       } else {
-        expect(successful).toEqual(false);
+        expect(successful).toEqual(true);
         return done();
       }
     });

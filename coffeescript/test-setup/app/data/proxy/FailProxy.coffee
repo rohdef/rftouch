@@ -8,9 +8,12 @@ Ext.define "RfTouchTest.data.proxy.FailProxy", {
     failCount: 3
   
   read: (operation, callback, scope) ->
+    if this._tries < this.getFailCount()
+      operation.setException("FAIL!")
+      this._tries += 1
+    else
+      operation.setSuccessful()
     
-    #operation.setException("FAIL!")
-    operation.setSuccessful()
     operation.setCompleted()
     
     if (typeof callback == 'function')
