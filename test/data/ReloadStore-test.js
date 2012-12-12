@@ -2,13 +2,20 @@
 
 buster.testCase("The reload store", {
   setUp: function() {
-    this.testFailProxy = null;
+    var proxyName;
+    proxyName = 'RfTouchTest.data.proxy.FailProxy';
+    Ext.syncRequire(proxyName);
+    this.testFailProxy = Ext.create(proxyName);
     return this.reloadStore = Ext.create('RfTouch.data.ReloadStore', {
       model: 'RfTouchTest.model.Person',
       proxy: this.testFailProxy
     });
   },
-  "Simple distance (on a line)": function() {
-    return expect(4).toEqual(3);
+  "Tests that the fail proxy will cause a fail without reload": function(done) {
+    this.reloadStore.on('load', function(store, records, successful, operation, opts) {
+      expect(successful).toEqual(false);
+      return done();
+    });
+    return this.reloadStore.load();
   }
 });
