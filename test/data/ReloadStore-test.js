@@ -11,11 +11,20 @@ buster.testCase("The reload store", {
       proxy: this.testFailProxy
     });
   },
-  "Tests that the fail proxy will cause a fail without reload": function(done) {
+  "FailProxy fails using default settings using a single reload": function(done) {
     this.reloadStore.on('load', function(store, records, successful, operation, opts) {
       expect(successful).toEqual(false);
       return done();
     });
     return this.reloadStore.load();
+  },
+  "FailProxy succeeds on the 4th try using default settings": function(done) {
+    return done();
+  },
+  "FailProxy succeeds with the first try using failcount=0": function(done) {
+    return done();
+  },
+  "FailProxy succeeds on the 3rd try using failcount=2": function(done) {
+    return done();
   }
 });
