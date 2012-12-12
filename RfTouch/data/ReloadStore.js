@@ -31,7 +31,7 @@ Ext.define('RfTouch.data.ReloadStore', {
   retryLoad: function(store, records, success, operation, opts) {
     if (!success) {
       if (store._tries >= store.getRetries()) {
-        return store.load();
+        return store._tries += 1;
       } else {
         return store.fireBailoutEvent();
       }

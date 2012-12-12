@@ -31,7 +31,8 @@ Ext.define 'RfTouch.data.ReloadStore', {
   retryLoad: (store, records, success, operation, opts) ->
     if not success
       if store._tries >= store.getRetries()
-        store.load()
+        #store.load()
+        store._tries += 1
       else
         store.fireBailoutEvent()
   

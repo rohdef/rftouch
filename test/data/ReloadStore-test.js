@@ -6,59 +6,16 @@ buster.testCase("ReloadStore", {
     proxyName = 'RfTouchTest.data.proxy.FailProxy';
     Ext.syncRequire(proxyName);
     this.testFailProxy = Ext.create(proxyName);
-    this.reloadStore = Ext.create('RfTouch.data.ReloadStore', {
-      model: 'RfTouchTest.model.Person',
-      proxy: this.testFailProxy
-    });
-    return this.normalStore = Ext.create('Ext.data.Store', {
+    return this.reloadStore = Ext.create('RfTouch.data.ReloadStore', {
       model: 'RfTouchTest.model.Person',
       proxy: this.testFailProxy
     });
   },
-  "FailProxy fails using default settings": function(done) {
-    this.normalStore.on('load', function(store, records, successful, operation, opts) {
+  "ReloadStore fails on a single try": function(done) {
+    this.reloadStore.on('load', function(store, records, successful, operation, opts) {
       expect(successful).toEqual(false);
       return done();
     });
-    return this.normalStore.load();
-  },
-  "FailProxy succeeds on the 4th try using default settings": function(done) {
-    var tries;
-    tries = 0;
-    this.normalStore.on('load', function(store, records, successful, operation, opts) {
-      if (tries < 3) {
-        expect(successful).toEqual(false);
-        tries += 1;
-        return store.load();
-      } else {
-        expect(successful).toEqual(true);
-        return done();
-      }
-    });
-    return this.normalStore.load();
-  },
-  "FailProxy succeeds with the first try using failcount=0": function(done) {
-    this.testFailProxy.setFailCount(0);
-    this.normalStore.on('load', function(store, records, successful, operation, opts) {
-      expect(successful).toEqual(true);
-      return done();
-    });
-    return this.normalStore.load();
-  },
-  "FailProxy succeeds on the 3rd try using failcount=2": function(done) {
-    var tries;
-    this.testFailProxy.setFailCount(2);
-    tries = 0;
-    this.normalStore.on('load', function(store, records, successful, operation, opts) {
-      if (tries < 2) {
-        expect(successful).toEqual(false);
-        tries += 1;
-        return store.load();
-      } else {
-        expect(successful).toEqual(true);
-        return done();
-      }
-    });
-    return this.normalStore.load();
+    return this.reloadStore.load();
   }
 });
