@@ -80,6 +80,8 @@ buster.testCase("ReloadStore", {
     var bailouts, tries;
     tries = 0;
     bailouts = 0;
+    this.testFailProxy.setFailCount(5);
+    this.reloadStore.setRetries(0);
     this.reloadStore.on('load', function(store, records, successful, operation, opts) {
       return tries += 1;
     });
@@ -89,7 +91,7 @@ buster.testCase("ReloadStore", {
         expect(tries).toEqual(4);
         return done();
       } else {
-        return store.load();
+        return store.resetAndReload();
       }
     });
     return this.reloadStore.load();

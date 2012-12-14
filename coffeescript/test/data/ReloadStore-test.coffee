@@ -78,6 +78,9 @@ buster.testCase "ReloadStore", {
     tries = 0
     bailouts = 0
     
+    this.testFailProxy.setFailCount(5)
+    this.reloadStore.setRetries(0)
+    
     this.reloadStore.on 'load', (store, records, successful, operation, opts) ->
       tries += 1
     
@@ -88,7 +91,7 @@ buster.testCase "ReloadStore", {
         expect(tries).toEqual(4)
         done()
       else
-        store.load()
+        store.resetAndReload()
     
     this.reloadStore.load()
 }
