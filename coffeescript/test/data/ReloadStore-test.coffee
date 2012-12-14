@@ -27,6 +27,8 @@ buster.testCase "ReloadStore", {
     this.reloadStore.on 'bailout', (store) ->
       expect(tries).toEqual(3)
       done()
+    
+    this.reloadStore.load()
   
   "Retrying on bailout will cause 3 new retries": (done) ->
     tries = 0
@@ -37,18 +39,56 @@ buster.testCase "ReloadStore", {
     
     this.reloadStore.on 'bailout', (store) ->
       if (tries == 3)
-        store.load()
+        store.resetAndReload()
       else
         expect(tries).toEqual(6)
         done()
+    
+    this.reloadStore.load()
   
   "Store succeeds after 2 reload when failproxy is set to fail twice": (done) ->
+    tries = 0
     this.testFailProxy.setFailCount(2)
-    done()
+    
+    this.reloadStore.on 'load', (store, records, successful, operation, opts) ->
+      tries += 1
+      
+      if (tries == 3)
+        expect(successful).toEqual(true)
+        done()
+    
+    this.reloadStore.load()
   
   "Store succeeds when retrying on bailout": (done) ->
-    done()
+    tries = 0
+    
+    this.reloadStore.on 'load', (store, records, successful, operation, opts) ->
+      tries += 1
+      
+      if (tries == 4)
+        expect(successful).toEqual(true)
+        done()
+    
+    this.reloadStore.on 'bailout', (store) ->
+      store.load()
+    
+    this.reloadStore.load()
   
   "Bailout event is fired every time when retries is set to 0": (done) ->
-    done()
+    tries = 0
+    bailouts = 0
+    
+    this.reloadStore.on 'load', (store, records, successful, operation, opts) ->
+      tries += 1
+    
+    this.reloadStore.on 'bailout', (store) ->
+      bailouts += 1
+      
+      if (bailouts == 4)
+        expect(tries).toEqual(4)
+        done()
+      else
+        store.load()
+    
+    this.reloadStore.load()
 }

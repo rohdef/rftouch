@@ -25,10 +25,11 @@ buster.testCase("ReloadStore", {
     this.reloadStore.on('load', function(store, records, successful, operation, opts) {
       return tries += 1;
     });
-    return this.reloadStore.on('bailout', function(store) {
+    this.reloadStore.on('bailout', function(store) {
       expect(tries).toEqual(3);
       return done();
     });
+    return this.reloadStore.load();
   },
   "Retrying on bailout will cause 3 new retries": function(done) {
     var tries;
@@ -37,23 +38,60 @@ buster.testCase("ReloadStore", {
     this.reloadStore.on('load', function(store, records, successful, operation, opts) {
       return tries += 1;
     });
-    return this.reloadStore.on('bailout', function(store) {
+    this.reloadStore.on('bailout', function(store) {
       if (tries === 3) {
-        return store.load();
+        return store.resetAndReload();
       } else {
         expect(tries).toEqual(6);
         return done();
       }
     });
+    return this.reloadStore.load();
   },
   "Store succeeds after 2 reload when failproxy is set to fail twice": function(done) {
+    var tries;
+    tries = 0;
     this.testFailProxy.setFailCount(2);
-    return done();
+    this.reloadStore.on('load', function(store, records, successful, operation, opts) {
+      tries += 1;
+      if (tries === 3) {
+        expect(successful).toEqual(true);
+        return done();
+      }
+    });
+    return this.reloadStore.load();
   },
   "Store succeeds when retrying on bailout": function(done) {
-    return done();
+    var tries;
+    tries = 0;
+    this.reloadStore.on('load', function(store, records, successful, operation, opts) {
+      tries += 1;
+      if (tries === 4) {
+        expect(successful).toEqual(true);
+        return done();
+      }
+    });
+    this.reloadStore.on('bailout', function(store) {
+      return store.load();
+    });
+    return this.reloadStore.load();
   },
   "Bailout event is fired every time when retries is set to 0": function(done) {
-    return done();
+    var bailouts, tries;
+    tries = 0;
+    bailouts = 0;
+    this.reloadStore.on('load', function(store, records, successful, operation, opts) {
+      return tries += 1;
+    });
+    this.reloadStore.on('bailout', function(store) {
+      bailouts += 1;
+      if (bailouts === 4) {
+        expect(tries).toEqual(4);
+        return done();
+      } else {
+        return store.load();
+      }
+    });
+    return this.reloadStore.load();
   }
 });

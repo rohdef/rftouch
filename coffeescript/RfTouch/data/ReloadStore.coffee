@@ -22,17 +22,20 @@ Ext.define 'RfTouch.data.ReloadStore', {
       The amount of times it should keep retrying before presenting with the 
       fallback option.
     ###
-    retries: 3
+    retries: 2
     
     listeners:
-      load: 'retryLoad'
-      bailout: 'defaultBailoutHandle'
+      load: {
+        fn: 'retryLoad'
+        order: 'after'
+      }
+      #bailout: 'defaultBailoutHandle'
     
   retryLoad: (store, records, success, operation, opts) ->
     if not success
-      if store._tries >= store.getRetries()
-        #store.load()
+      if store._tries < store.getRetries()
         store._tries += 1
+        store.load()
       else
         store.fireBailoutEvent()
   

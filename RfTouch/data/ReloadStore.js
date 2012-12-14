@@ -22,16 +22,19 @@ Ext.define('RfTouch.data.ReloadStore', {
       fallback option.
     */
 
-    retries: 3,
+    retries: 2,
     listeners: {
-      load: 'retryLoad',
-      bailout: 'defaultBailoutHandle'
+      load: {
+        fn: 'retryLoad',
+        order: 'after'
+      }
     }
   },
   retryLoad: function(store, records, success, operation, opts) {
     if (!success) {
-      if (store._tries >= store.getRetries()) {
-        return store._tries += 1;
+      if (store._tries < store.getRetries()) {
+        store._tries += 1;
+        return store.load();
       } else {
         return store.fireBailoutEvent();
       }
