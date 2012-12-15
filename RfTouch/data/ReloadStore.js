@@ -30,16 +30,6 @@ Ext.define('RfTouch.data.ReloadStore', {
       }
     }
   },
-  retryLoad: function(store, records, success, operation, opts) {
-    if (!success) {
-      if (store._tries < store.getRetries()) {
-        store._tries += 1;
-        return store.load();
-      } else {
-        return store.fireBailoutEvent();
-      }
-    }
-  },
   /**
     Resets the retry counter and attempts to load it again.
     
@@ -56,6 +46,22 @@ Ext.define('RfTouch.data.ReloadStore', {
   },
   /**
     @private
+    Default handler for
+  */
+
+  retryLoad: function(store, records, success, operation, opts) {
+    if (!success) {
+      if (store._tries < store.getRetries()) {
+        store._tries += 1;
+        return store.load();
+      } else {
+        return store.fireBailoutEvent();
+      }
+    }
+  },
+  /**
+    @private
+    Fires the bailout event
   */
 
   fireBailoutEvent: function(store) {
@@ -63,12 +69,5 @@ Ext.define('RfTouch.data.ReloadStore', {
       store = this;
     }
     return store.fireEvent('bailout', store);
-  },
-  /**
-    @private
-  */
-
-  defaultBailoutHandle: function(store) {
-    return Ext.Msg.alert('Loading data failed', 'Press ok to try again.', store.resetAndReload, store);
   }
 });

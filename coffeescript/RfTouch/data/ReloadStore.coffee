@@ -29,15 +29,6 @@ Ext.define 'RfTouch.data.ReloadStore', {
         fn: 'retryLoad'
         order: 'after'
       }
-      #bailout: 'defaultBailoutHandle'
-    
-  retryLoad: (store, records, success, operation, opts) ->
-    if not success
-      if store._tries < store.getRetries()
-        store._tries += 1
-        store.load()
-      else
-        store.fireBailoutEvent()
   
   ###*
     Resets the retry counter and attempts to load it again.
@@ -51,15 +42,20 @@ Ext.define 'RfTouch.data.ReloadStore', {
   
   ###*
     @private
+    Default handler for 
   ###
-  fireBailoutEvent: (store = this) ->
-    store.fireEvent('bailout', store)
+  retryLoad: (store, records, success, operation, opts) ->
+    if not success
+      if store._tries < store.getRetries()
+        store._tries += 1
+        store.load()
+      else
+        store.fireBailoutEvent()
   
   ###*
     @private
+    Fires the bailout event
   ###
-  defaultBailoutHandle: (store) ->
-    Ext.Msg.alert('Loading data failed',
-              'Press ok to try again.',
-              store.resetAndReload, store);
+  fireBailoutEvent: (store = this) ->
+    store.fireEvent('bailout', store)
 }
