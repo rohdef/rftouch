@@ -13,7 +13,11 @@ Ext.define("RfTouch.ConnectivityMap", {
   },
   setOnline: function(online) {
     if (online) {
-      return this.setMasked(false);
+      if ((window.google != null) && (window.google.maps != null)) {
+        return this.setMasked(false);
+      } else {
+        return this.loadMaps();
+      }
     } else {
       return this.setMasked(this.getOfflineMask());
     }
@@ -23,5 +27,6 @@ Ext.define("RfTouch.ConnectivityMap", {
   },
   offline: function() {
     return this.setOnline(false);
-  }
+  },
+  loadMaps: function() {}
 });

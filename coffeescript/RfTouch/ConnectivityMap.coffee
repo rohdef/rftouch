@@ -4,6 +4,7 @@
 Ext.define "RfTouch.ConnectivityMap", {
   extend: 'Ext.Panel'
   
+  
   config:
     offlineMask: {
       xtype: 'loadmask'
@@ -12,7 +13,10 @@ Ext.define "RfTouch.ConnectivityMap", {
   
   setOnline: (online) ->
     if (online)
-      this.setMasked(false)    
+      if (window.google? and window.google.maps?)
+        this.setMasked(false)    
+      else
+        this.loadMaps()
     else
       this.setMasked(this.getOfflineMask())
   
@@ -21,4 +25,7 @@ Ext.define "RfTouch.ConnectivityMap", {
   
   offline: () ->
     this.setOnline(false)
+  
+  loadMaps: () ->
+    # Stub
 }
