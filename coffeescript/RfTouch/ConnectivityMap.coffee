@@ -14,5 +14,11 @@ Ext.define "RfTouch.ConnectivityMap", {
     if (online)
       this.setMasked(false)    
     else
-      this.setMasked(this.getOfflineMask())    
+      this.setMasked(this.getOfflineMask())
+  
+  online: () ->
+    this.setOnline(true)
+  
+  offline: () ->
+    this.setOnline(false)
 }

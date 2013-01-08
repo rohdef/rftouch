@@ -26,6 +26,20 @@ buster.testCase("ConnectivityMap", {
     assert.calledOnce(map.setMasked);
     return assert.calledWith(map.setMasked, false);
   },
-  "online calls setOnline with true": function() {},
-  "offline calls setOnline with false": function() {}
+  "online calls setOnline with true": function() {
+    var map;
+    map = this.map;
+    this.stub(map, "setOnline");
+    map.online();
+    assert.calledOnce(map.setOnline);
+    return assert.calledWith(map.setOnline, true);
+  },
+  "offline calls setOnline with false": function() {
+    var map;
+    map = this.map;
+    this.stub(map, "setOnline");
+    map.offline();
+    assert.calledOnce(map.setOnline);
+    return assert.calledWith(map.setOnline, false);
+  }
 });

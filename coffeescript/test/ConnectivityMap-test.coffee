@@ -25,8 +25,20 @@ buster.testCase "ConnectivityMap", {
     assert.calledWith(map.setMasked, false)
   
   "online calls setOnline with true": () ->
-    # Stub
+    map = this.map
+    
+    this.stub(map, "setOnline")
+    map.online()
+    
+    assert.calledOnce(map.setOnline)
+    assert.calledWith(map.setOnline, true)
   
   "offline calls setOnline with false": () ->
-    # Stub
+    map = this.map
+    
+    this.stub(map, "setOnline")
+    map.offline()
+    
+    assert.calledOnce(map.setOnline)
+    assert.calledWith(map.setOnline, false)
 }

@@ -17,5 +17,11 @@ Ext.define("RfTouch.ConnectivityMap", {
     } else {
       return this.setMasked(this.getOfflineMask());
     }
+  },
+  online: function() {
+    return this.setOnline(true);
+  },
+  offline: function() {
+    return this.setOnline(false);
   }
 });
