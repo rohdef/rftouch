@@ -6,7 +6,6 @@
 Ext.define("RfTouch.ConnectivityMap", {
   extend: 'Ext.Panel',
   config: {
-    ownLocation: false,
     offlineMask: {
       xtype: 'loadmask',
       message: 'Please connect to the internet to use the map.'
