@@ -14,7 +14,7 @@ Ext.application({
 
     models: ['Person'],
     stores: ['RfTouch.data.ReloadStore'],
-    views: [],
+    views: ['RfTouch.ConnectivityMap'],
 
     icon: {
     },
