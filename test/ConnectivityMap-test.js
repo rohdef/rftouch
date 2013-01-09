@@ -83,23 +83,38 @@ buster.testCase("ConnectivityMap with maps not loaded", {
   },
   "The callback is called with an API key": function(done) {
     var map, path, server;
+    server = this.server;
     map = this.map;
     this.stub(window.rohdef.rftouch, "gmap_cb");
     path = buster.env.contextPath + '/test-setup/res/google-maps-fake-response.js';
     map.setGoogleMapsApiPath(path);
-    server = this.server;
+    map.setGoogleMapsApiKey(42);
     window.rohdef.rftouch.resumeTest = function() {
-      var scriptTag;
-      scriptTag = document.getElementById("");
+      var param, paramDict, paramSplit, params, scriptTag, url, _i, _len, _ref;
+      scriptTag = document.getElementById("rohdef-test-gmap");
       if (server.requests.length > 0) {
-
-      } else if ((scriptTag != null)) {
-
+        expect(server.requests.length).toEqual(1, "More than one request was made, this shouldn't happen.");
+        url = server.requests[0].url;
       }
-      if ((typeof url !== "undefined" && url !== null)) {
-
+      if ((scriptTag != null)) {
+        url = scriptTag.src;
+      }
+      if ((url != null)) {
+        params = url.split("?")[1];
+        paramDict = {};
+        paramSplit = function(param) {
+          param = param.split("=");
+          return paramDict[param[0]] = param[1];
+        };
+        _ref = params.split("&");
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          param = _ref[_i];
+          paramSplit(param);
+        }
+        expect(paramDict["key"]).toEqual("42");
       } else {
-        console.warn("API key test can't be run. Either use XHR or give the script box the id: rohdef-test-gmap");
+        console.warn("API key test can't be run. Either use XHR or give the script box the id: rohdef-test-gmap.");
+        expect(true).toEqual(true);
       }
       return done();
     };

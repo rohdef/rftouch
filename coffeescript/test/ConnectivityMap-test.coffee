@@ -94,25 +94,40 @@ buster.testCase "ConnectivityMap with maps not loaded", {
     map.online()
     
   "The callback is called with an API key": (done) ->
+    server = this.server
     map = this.map
     this.stub(window.rohdef.rftouch, "gmap_cb")
     
     path = buster.env.contextPath+'/test-setup/res/google-maps-fake-response.js'
     map.setGoogleMapsApiPath path
-    
-    server = this.server
+    map.setGoogleMapsApiKey 42
+        
+    # TODO do I need to respond? In that case, do I need it in the other test too?        
+
     window.rohdef.rftouch.resumeTest = ()->
-      scriptTag = document.getElementById("")
+      scriptTag = document.getElementById("rohdef-test-gmap")
       
-      if (server.requests.length > 0) then
-        # Do XHR test
-      else if (scriptTag?) then
-        # Get src
+      if (server.requests.length > 0)
+        expect(server.requests.length).toEqual(1, "More than one request was made, this shouldn't happen.")
+
+        url = server.requests[0].url
+      if (scriptTag?)
+        url = scriptTag.src
       
       if (url?)
-        # Do test
+        params = url.split("?")[1]
+        paramDict = {}
+        
+        paramSplit = (param) ->
+          param = param.split("=")
+          paramDict[param[0]] = param[1]
+        
+        paramSplit param for param in params.split("&")
+        
+        expect(paramDict["key"]).toEqual("42")
       else
-        console.warn "API key test can't be run. Either use XHR or give the script box the id: rohdef-test-gmap"
+        console.warn "API key test can't be run. Either use XHR or give the script box the id: rohdef-test-gmap."
+        expect(true).toEqual(true)
       
       done()
     
