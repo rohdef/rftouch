@@ -9,6 +9,7 @@ config["My tests"] =
     "RfTouch/*/*.js"
     "test-setup/app/*/*.js"
     "test-setup/app/*/*/*.js"
+    "test-setup/res/*"
   ]
   
   sources: [

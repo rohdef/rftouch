@@ -6,11 +6,52 @@
 Ext.define("RfTouch.ConnectivityMap", {
   extend: 'Ext.Panel',
   config: {
+    /**
+      @cfg {Ext.Mask/Ext.LoadMaskObject/Boolean} offlineMask
+      The mask to show when the map is offline. Usually this 
+      would be a load mask with a message telling the user that 
+      he needs to be online.
+      
+      Example:
+        
+        offlineMask: {
+          xtype: 'loadmask',
+          message: 'Please connect to the internet to use the map.'
+        }
+    */
+
     offlineMask: {
       xtype: 'loadmask',
       message: 'Please connect to the internet to use the map.'
-    }
+    },
+    /**
+      @cfg {String} googleMapsApiPath
+      The path where Google Maps is located, usually this don't need 
+      to be modified.
+    */
+
+    googleMapsApiPath: "https://maps.googleapis.com/maps/api/js?sensor=true"
   },
+  constructor: function() {
+    var _base;
+    if (!(window.rohdef != null)) {
+      window.rohdef = {};
+    }
+    if (!(window.rohdef.rftouch != null)) {
+      window.rohdef.rftouch = {};
+    }
+    if (!(typeof (_base = window.rohdef.rftouch).gmap_cb === "function" ? _base.gmap_cb() : void 0)) {
+      window.rohdef.rftouch.gmap_cb = this._defaultMapsApiCb;
+    }
+    return this.callParent(arguments);
+  },
+  /**
+    @private
+    Helper method containing the implementation for the callback 
+    to use with Google Maps
+  */
+
+  _defaultMapsApiCb: function() {},
   setOnline: function(online) {
     if (online) {
       if ((window.google != null) && (window.google.maps != null)) {
@@ -28,5 +69,21 @@ Ext.define("RfTouch.ConnectivityMap", {
   offline: function() {
     return this.setOnline(false);
   },
-  loadMaps: function() {}
+  loadMaps: function() {
+    var googleMapsUrl, script;
+    googleMapsUrl = this.getGoogleMapsApiPath();
+    script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = googleMapsUrl;
+    return document.head.appendChild(script);
+    /*
+        request = new XMLHttpRequest();
+        request.open('GET', path, false);
+        request.send()
+        
+        resp = request.responseText
+        eval resp
+    */
+
+  }
 });

@@ -19,8 +19,8 @@ buster.testCase("ConnectivityMap with maps loaded", {
     };
     this.stub(map, "setMasked");
     eventSimulation();
-    assert.calledOnce(map.setMasked);
-    return assert.calledWith(map.setMasked, map.getOfflineMask());
+    expect(map.setMasked).toHaveBeenCalledOnce();
+    return expect(map.setMasked).toHaveBeenCalledWith(map.getOfflineMask());
   },
   "Map gets unmasked when online is fired after offline": function() {
     var eventSimulation, map;
@@ -30,8 +30,8 @@ buster.testCase("ConnectivityMap with maps loaded", {
     };
     this.stub(map, "setMasked");
     eventSimulation();
-    assert.calledOnce(map.setMasked);
-    return assert.calledWith(map.setMasked, false);
+    expect(map.setMasked).toHaveBeenCalledOnce();
+    return expect(map.setMasked).toHaveBeenCalledWith(false);
   },
   "online calls setOnline with true": function() {
     var map;
@@ -46,14 +46,15 @@ buster.testCase("ConnectivityMap with maps loaded", {
     map = this.map;
     this.stub(map, "setOnline");
     map.offline();
-    assert.calledOnce(map.setOnline);
-    return assert.calledWith(map.setOnline, false);
+    expect(map.setOnline).toHaveBeenCalledOnce();
+    return expect(map.setOnline).toHaveBeenCalledWith(false);
   }
 });
 
 buster.testCase("ConnectivityMap with maps not loaded", {
   setUp: function() {
-    return this.map = Ext.create('RfTouch.ConnectivityMap');
+    this.map = Ext.create('RfTouch.ConnectivityMap');
+    return this.server = this.useFakeServer().create();
   },
   tearDown: function() {
     return this.map.destroy();
@@ -64,15 +65,44 @@ buster.testCase("ConnectivityMap with maps not loaded", {
     this.stub(map, "loadMaps");
     this.stub(map, "setMasked");
     map.online();
-    assert.calledOnce(map.loadMaps);
-    return refute.called(map.setMasked);
+    expect(map.loadMaps).toHaveBeenCalledOnce();
+    return expect(map.setMasked).not.toHaveBeenCalled();
   },
-  "When loadMaps is run it adds the google maps call to the head": function() {
-    this.stub(document.head, "appendChild");
-    return assert.called(document.head.appendChild);
+  "The callback is executed when the script is loaded": function(done) {
+    var map, path, server;
+    map = this.map;
+    this.stub(window.rohdef.rftouch, "gmap_cb");
+    path = buster.env.contextPath + '/test-setup/res/google-maps-fake-response.js';
+    map.setGoogleMapsApiPath(path);
+    server = this.server;
+    window.rohdef.rftouch.resumeTest = function() {
+      expect(window.rohdef.rftouch.gmap_cb).toHaveBeenCalledOnce();
+      return done();
+    };
+    return map.online();
   },
-  "The callback is executed when the script is loaded": function() {
-    return this.stub(window.rohdef.rftouch, "gmap_cb");
-  },
-  "The callback shows the map": function() {}
+  "The callback is called with an API key": function(done) {
+    var map, path, server;
+    map = this.map;
+    this.stub(window.rohdef.rftouch, "gmap_cb");
+    path = buster.env.contextPath + '/test-setup/res/google-maps-fake-response.js';
+    map.setGoogleMapsApiPath(path);
+    server = this.server;
+    window.rohdef.rftouch.resumeTest = function() {
+      var scriptTag;
+      scriptTag = document.getElementById("");
+      if (server.requests.length > 0) {
+
+      } else if ((scriptTag != null)) {
+
+      }
+      if ((typeof url !== "undefined" && url !== null)) {
+
+      } else {
+        console.warn("API key test can't be run. Either use XHR or give the script box the id: rohdef-test-gmap");
+      }
+      return done();
+    };
+    return map.online();
+  }
 });
